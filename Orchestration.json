@@ -1,0 +1,32 @@
+{
+  "See": "https://confluence.aveva.com/display/PTFD/Orchestration.json",
+  "Name": "Grail",
+  "Brief": "Installer testing",
+  "Build": [
+    {
+      "Name": "Grail",
+      "Type": "MsBuild",
+      "Project": "Grail\\Grail.csproj",
+      "TargetFrameworkVersion": "v4.7.2"
+    }
+  ],
+  "Publish": {
+    "Squirrel": {
+      "Location": "\\\\ukcamsfs\\EBU\\EDMPlatform\\Tools\\Grail",
+      "Files": [
+        {
+          "Source": "bin\\Release\\Grail.exe",
+          "Target": ""
+        },
+        {
+          "Source": "bin\\Release\\Grail.exe.config",
+          "Target": ""
+        },
+        {
+          "Source": "bin\\Release\\SquirrelNutkin.dll",
+          "Target": ""
+        }
+      ]
+    }
+  }
+}
