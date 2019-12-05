@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Windows;
 
@@ -17,7 +16,7 @@ namespace Grail
     {
         private static string applicationName;
 
-        private async void Application_Start(object sender, StartupEventArgs e)
+        private void Application_Start(object sender, StartupEventArgs e)
         {
             AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
 
