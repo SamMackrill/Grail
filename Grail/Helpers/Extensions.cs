@@ -669,10 +669,29 @@ namespace Grail
 
         public static string GetVersion()
         {
-            var executingAssembly = Assembly.GetExecutingAssembly();
-            var fileVersionInfo = FileVersionInfo.GetVersionInfo(executingAssembly.Location);
-            var result = $"{fileVersionInfo.FileMajorPart}.{fileVersionInfo.FileMinorPart}.{fileVersionInfo.FileBuildPart} ({fileVersionInfo.ProductVersion})";
+            var result = $"{GetShortVersion()} ({FileVersionInfo.ProductVersion})";
             return result;
+        }
+
+        public static string GetShortVersion()
+        {
+            var result = $"{FileVersionInfo.FileMajorPart}.{FileVersionInfo.FileMinorPart}.{FileVersionInfo.FileBuildPart}";
+            return result;
+        }
+
+
+        private static FileVersionInfo fileVersionInfo;
+        private static FileVersionInfo FileVersionInfo
+        {
+            get
+            {
+                if (fileVersionInfo == null)
+                {
+                    var executingAssembly = Assembly.GetExecutingAssembly();
+                    fileVersionInfo = FileVersionInfo.GetVersionInfo(executingAssembly.Location);
+                }
+                return fileVersionInfo;
+            }
         }
 
         public static string Created(this Window w)
