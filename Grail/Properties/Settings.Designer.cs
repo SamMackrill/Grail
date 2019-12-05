@@ -25,7 +25,7 @@ namespace Grail.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://platformtools.blob.core.windows.net/grail/")]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://platformtools.blob.core.windows.net/grail")]
         public string ReleasePath {
             get {
                 return ((string)(this["ReleasePath"]));

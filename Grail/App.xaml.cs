@@ -6,6 +6,7 @@ using System.Windows;
 using Aveva.Tools.SquirrelNutkin;
 
 using Grail.Properties;
+using Grail.ViewModel;
 
 namespace Grail
 {
@@ -42,16 +43,23 @@ namespace Grail
             {
                 var update = squirrel.UpdateApp();
                 var success = update.Wait(new TimeSpan(0, 0, Settings.Default.UpdateTimeout));
-                if (!success) Console.WriteLine("Update failed, carry on as if it didn't");
-
-                if (update.Result == UpdateState.UpdatedWithExit || squirrel.SpecialCall)
+                if (!success)
+                {
+                    Console.WriteLine("Update failed, carry on as if it didn't");
+                }
+                else if (update.Result == UpdateState.UpdatedWithExit || squirrel.SpecialCall)
                 {
                     if (Debugger.IsAttached) Console.ReadKey();
                     return;
                 }
             }
 
-            var window = new MainWindow();
+            var context = new MainWindowViewModel();
+
+            var window = new MainWindow
+            {
+                DataContext = context
+            };
 
             window.Show();
 
