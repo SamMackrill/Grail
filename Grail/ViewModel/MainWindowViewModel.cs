@@ -182,6 +182,7 @@ namespace Grail.ViewModel
                 var installedVersion = updates.CurrentlyInstalledVersion == null ? "development" : updates.CurrentlyInstalledVersion.Version.ToString();
 
                 UpdateInformation = $"{applicationName} has been updated from {installedVersion} to {currentVersion}, rerun to finish update";
+                UpdateManager.RestartApp();
             }
             finally
             {
@@ -192,5 +193,12 @@ namespace Grail.ViewModel
 
         }, () => UpdateAvailable);
 
+        public void Dispose()
+        {
+            UpdateAvailable = false;
+            updates = null;
+            updateManager.Dispose();
+            updateManager = null;
+        }
     }
 }

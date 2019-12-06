@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 
 using Aveva.Tools.SquirrelNutkin;
@@ -15,7 +16,8 @@ namespace Grail
     /// </summary>
     public partial class App : Application
     {
-        private static string applicationName;
+        private MainWindowViewModel context;
+        private Task update = Task.FromResult(true);
 
         private async void Application_Start(object sender, StartupEventArgs e)
         {
@@ -28,7 +30,7 @@ namespace Grail
                 .ToList();
 
 
-            var context = new MainWindowViewModel(options);
+            context = new MainWindowViewModel(options);
 
             var window = new MainWindow
             {
@@ -39,7 +41,8 @@ namespace Grail
 
             try
             {
-                await context.CheckForUpdates(e.Args);
+                update = context.CheckForUpdates(e.Args);
+                await update;
             }
             catch (Exception exception)
             {
@@ -52,9 +55,11 @@ namespace Grail
             MessageBox.Show((e.ExceptionObject as Exception)?.Message ?? "Unknown", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        private void Application_Exit(object sender, ExitEventArgs e)
+        private async void Application_Exit(object sender, ExitEventArgs e)
         {
             Settings.Default.Save();
+            await update.ContinueWith(ex => { });
+            context?.Dispose();
         }
     }
 }
