@@ -78,74 +78,76 @@ namespace Grail.ViewModel
 
                 UpdateInformation = "Checking...";
 
-                updateManager = new UpdateManager(Settings.Default.ReleasePath, applicationName);
-
-                void OnDo(string caller, Action<Version> doAction, Version v = null)
+                string latestVersion;
+                using (var updateManager = new UpdateManager(Settings.Default.ReleasePath, applicationName))
                 {
-                    try
+                    void OnDo(string caller, Action<Version> doAction, Version v = null)
                     {
-                        doAction(v);
+                        try
+                        {
+                            doAction(v);
+                        }
+                        catch (Exception e)
+                        {
+                            UpdateInformation = $"Error in {caller}: {e.Message}";
+                        }
                     }
-                    catch (Exception e)
+
+                    void OnAppUninstall(Version v)
                     {
-                        UpdateInformation = $"Error in {caller}: {e.Message}";
+                        OnDo(GetCaller(), v0 =>
+                        {
+                            updateManager.RemoveShortcutForThisExe();
+                        }, v);
                     }
-                }
 
-                void OnAppUninstall(Version v)
-                {
-                    OnDo(GetCaller(), v0 =>
+                    void OnInitialInstall(Version v)
                     {
-                        updateManager.RemoveShortcutForThisExe();
-                    }, v);
-                }
+                        OnDo(GetCaller(), v0 =>
+                        {
+                            updateManager.CreateShortcutForThisExe();
+                        }, v);
+                    }
 
-                void OnInitialInstall(Version v)
-                {
-                    OnDo(GetCaller(), v0 =>
+                    void OnAppUpdate(Version v)
                     {
-                        updateManager.CreateShortcutForThisExe();
-                    }, v);
-                }
+                        OnDo(GetCaller(), v0 =>
+                        {
+                            updateManager.CreateShortcutForThisExe();
+                        }, v);
+                    }
 
-                void OnAppUpdate(Version v)
-                {
-                    OnDo(GetCaller(), v0 =>
+                    void OnAppObsoleted(Version v) => OnDo(GetCaller(), v0 =>
                     {
-                        updateManager.CreateShortcutForThisExe();
                     }, v);
-                }
 
-                void OnAppObsoleted(Version v) => OnDo(GetCaller(), v0 =>
-                {
-                }, v);
+                    void OnFirstRun() => OnDo(GetCaller(), v0 =>
+                    {
+                    });
 
-                void OnFirstRun() => OnDo(GetCaller(), v0 =>
-                {
-                });
-
-                SquirrelAwareApp.HandleEvents(
-                    onAppUninstall: OnAppUninstall,
-                    onInitialInstall: OnInitialInstall,
-                    onAppUpdate: OnAppUpdate,
-                    onAppObsoleted: OnAppObsoleted,
-                    onFirstRun: OnFirstRun
+                    SquirrelAwareApp.HandleEvents(
+                        onAppUninstall: OnAppUninstall,
+                        onInitialInstall: OnInitialInstall,
+                        onAppUpdate: OnAppUpdate,
+                        onAppObsoleted: OnAppObsoleted,
+                        onFirstRun: OnFirstRun
                     );
 
-                updates = await updateManager.CheckForUpdate();
+                    updates = await updateManager.CheckForUpdate();
 
-                Version = updates.CurrentlyInstalledVersion == null ? "development" : updates.CurrentlyInstalledVersion.Version.ToString();
+                    Version = updates.CurrentlyInstalledVersion == null ? "development" : updates.CurrentlyInstalledVersion.Version.ToString();
 
-                if (!updates.ReleasesToApply.Any())
-                {
-                    UpdateInformation = "You are running the latest version.";
-                    return;
+                    if (!updates.ReleasesToApply.Any())
+                    {
+                        UpdateInformation = "You are running the latest version.";
+                        return;
+                    }
+
+                    latestVersion = updates.ReleasesToApply.OrderBy(x => x.Version).LastOrDefault()?.Version.ToString() ?? "Unknown";
+                    UpdateInformation = $"Version: {latestVersion} available. Downloading...";
+
+                    await updateManager.DownloadReleases(updates.ReleasesToApply);
                 }
-
-                var latestVersion = updates.ReleasesToApply.OrderBy(x => x.Version).LastOrDefault()?.Version.ToString() ?? "Unknown";
-                UpdateInformation = $"Version: {latestVersion} available. Downloading...";
-
-                await updateManager.DownloadReleases(updates.ReleasesToApply);
 
                 UpdateAvailable = true;
                 UpdateInformation = $"Version: {latestVersion} ready";
@@ -157,7 +159,6 @@ namespace Grail.ViewModel
         }
 
         private UpdateInfo updates;
-        private UpdateManager updateManager;
 
 
         private static string GetCaller([CallerMemberName] string caller = null)
@@ -167,14 +168,17 @@ namespace Grail.ViewModel
 
         public RelayCommand ApplyUpdateCommand => new RelayCommand(async () =>
         {
-            if (!UpdateAvailable || updateManager == null || updates == null) return;
+            if (!UpdateAvailable || updates == null) return;
 
             UpdateAvailable = false;
             UpdateInformation = "Applying Update...";
             try
             {
-                await updateManager.ApplyReleases(updates);
-                await updateManager.UpdateApp();
+                using (var updateManager = new UpdateManager(Settings.Default.ReleasePath, applicationName))
+                {
+                    await updateManager.ApplyReleases(updates);
+                    await updateManager.UpdateApp();
+                }
 
                 var latestVersion = updates.ReleasesToApply.OrderBy(x => x.Version).LastOrDefault();
                 var currentVersion = latestVersion?.Version.ToString() ?? "unknown";
@@ -187,7 +191,6 @@ namespace Grail.ViewModel
             finally
             {
                 UpdateAvailable = false;
-                updateManager = null;
                 updates = null;
             }
 
@@ -197,8 +200,6 @@ namespace Grail.ViewModel
         {
             UpdateAvailable = false;
             updates = null;
-            updateManager.Dispose();
-            updateManager = null;
         }
     }
 }
