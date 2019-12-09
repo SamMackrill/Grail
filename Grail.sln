@@ -12,8 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Orchestration.json = Orchestration.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SquirrelNutkin", "..\..\..\Users\sam.mackrill\work\git\SquirrelNutkin\SquirrelNutkin\SquirrelNutkin.csproj", "{64186D57-19BF-4350-86C0-814A1AAEF387}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,10 +22,6 @@ Global
 		{6D978984-0251-4FB2-8AD1-3117817B7BAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D978984-0251-4FB2-8AD1-3117817B7BAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D978984-0251-4FB2-8AD1-3117817B7BAD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{64186D57-19BF-4350-86C0-814A1AAEF387}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{64186D57-19BF-4350-86C0-814A1AAEF387}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{64186D57-19BF-4350-86C0-814A1AAEF387}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{64186D57-19BF-4350-86C0-814A1AAEF387}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
