@@ -13,7 +13,7 @@ namespace Grail.ViewModel
     public class MainWindowViewModel : BaseViewModel
     {
         private readonly List<string> options;
-        public static string Title => $"Grail {Extensions.GetShortVersion()}";
+        public static string Title => $"The Holy Grail {Extensions.GetShortVersion()}";
 
         private string version;
         public string Version
