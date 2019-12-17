@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace Grail.ViewModel
     public class MainWindowViewModel : BaseViewModel
     {
         private readonly List<string> options;
-        public static string Title => $"The Holy Grail {Extensions.GetShortVersion()}";
+        public static string Title => $"The True Grail {Extensions.GetShortVersion()}";
 
         private string version;
         public string Version
@@ -40,11 +41,16 @@ namespace Grail.ViewModel
         }
 
         private readonly string applicationName;
+        private readonly string releasePath;
 
         public MainWindowViewModel(List<string> options)
         {
             applicationName = typeof(App).Assembly.GetName().Name;
             this.options = options;
+
+            releasePath = Directory.Exists(Settings.Default.LocalReleasePath)
+                ? Settings.Default.LocalReleasePath 
+                : Settings.Default.ReleasePath;
         }
 
         private bool updateAvailable;
@@ -79,7 +85,7 @@ namespace Grail.ViewModel
                 UpdateInformation = "Checking...";
 
                 string latestVersion;
-                using (var updateManager = new UpdateManager(Settings.Default.ReleasePath, applicationName))
+                using (var updateManager = new UpdateManager(releasePath, applicationName))
                 {
                     void OnDo(string caller, Action<Version> doAction, Version v = null)
                     {
@@ -174,7 +180,7 @@ namespace Grail.ViewModel
             UpdateInformation = "Applying Update...";
             try
             {
-                using (var updateManager = new UpdateManager(Settings.Default.ReleasePath, applicationName))
+                using (var updateManager = new UpdateManager(releasePath, applicationName))
                 {
                     await updateManager.ApplyReleases(updates);
                     await updateManager.UpdateApp();

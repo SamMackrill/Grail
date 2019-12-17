@@ -12,7 +12,7 @@ namespace Grail.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.3.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.4.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -38,6 +38,18 @@ namespace Grail.Properties {
         public int UpdateTimeout {
             get {
                 return ((int)(this["UpdateTimeout"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("\\\\ukcamsfs_NOT\\EBU\\EDMPlatform\\Tools\\Grail")]
+        public string LocalReleasePath {
+            get {
+                return ((string)(this["LocalReleasePath"]));
+            }
+            set {
+                this["LocalReleasePath"] = value;
             }
         }
     }
